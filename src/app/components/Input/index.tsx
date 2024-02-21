@@ -25,38 +25,51 @@ export const Input = ({
   const [value, setValue] = useState<string>(defaultValue || "");
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (validator?.allValid()) {
+    setError(null)
+    }
+    if (value) {
+        setError(null)
+      } 
+    }, [validator])
+  
+
   const onBlur = () => {
     console.log("blur");
     console.log("validator", validator);
     validator?.showMessageFor(name);
-  if (name === "password") {
-    if (value.length < 8) {
-      setError("Password must be at least 8 characters long");
+    if (name === "password") {
+      if (value.length < 8) {
+        setError("Password must be at least 8 characters long.");
+      } else {
+        setError(validator?.getErrorMessages()[name]);
+      }
+    } else if (name === "login") {
+      if (value.trim() === "") {
+        setError("The login field is required.");
+      } else {
+        setError(validator?.getErrorMessages()[name]);
+      }
+    } else if (name === "email") {
+      if (value.trim() === "") {
+        setError("Email is required");
+      } else if (!/\S+@\S+\.\S+/.test(value)) {
+        setError("Invalid email format.");
+      } else {
+        setError(validator?.getErrorMessages()[name]);
+      }
     } else {
       setError(validator?.getErrorMessages()[name]);
     }
-  } else if (name === "login") {
-    if (value.trim() === "") {
-      setError("Login is required");
-    } else {
-      setError(validator?.getErrorMessages()[name]);
-    }
-  } else if (name === "email") {
-    if (value.trim() === "") {
-      setError("Email is required");
-    } else if (!/\S+@\S+\.\S+/.test(value)) {
-      setError("Invalid email format");
-    } else {
-      setError(validator?.getErrorMessages()[name]);
-    }
-  } else {
-    setError(validator?.getErrorMessages()[name]);
-  }
 
   };
 
   const onChange = (ev: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = ev.target.value || "";
+    if (error) {
+      setError('');
+    }
     setValue(newValue);
     handleChange(newValue);
   };

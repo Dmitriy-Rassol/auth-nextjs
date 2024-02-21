@@ -15,32 +15,32 @@ export default function Register() {
   const [showAlert, setShowAlert] = useState<
     "info" | "error" | "success" | null
   >(null);
-  
+
   const onSubmit = async (
     ev: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     ev.preventDefault();
 
-      try {
-        const response = await fetch("/api/auth/register", {
-          method: "POST",
-          body: JSON.stringify({
-            login,
-            email,
-            password,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-        console.log("Success: ", result);
-        setShowAlert("success");
-        //router.push("/");
-      } catch (error) {
-        console.log("Error: ", error);
-        setShowAlert("error");
-      } // Действия при успешной валидации
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          login,
+          email,
+          password,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Success: ", result);
+      setShowAlert("success");
+      //router.push("/");
+    } catch (error) {
+      console.log("Error: ", error);
+      setShowAlert("error");
+    } // Действия при успешной валидации
   };
 
   return (
@@ -57,6 +57,9 @@ export default function Register() {
         name={"login"}
         validator={validator}
       />
+      <p style={{ display: "none" }}>
+        {validator.message("login", login, "required")}
+      </p>
       <Input
         type="email"
         label="Your email"
@@ -66,6 +69,9 @@ export default function Register() {
         name={"email"}
         validator={validator}
       />
+      <p style={{ display: "none" }}>
+        {validator.message("email", email, "required|email")}
+      </p>
       <Input
         type="password"
         label="Your password"
@@ -75,6 +81,9 @@ export default function Register() {
         name={"password"}
         validator={validator}
       />
+      <p style={{ display: "none" }}>
+        {validator.message("password", password, "required|min:8")}
+      </p>
       <Button disabled={!validator.allValid()} text="Sign up" />
     </form>
   );
